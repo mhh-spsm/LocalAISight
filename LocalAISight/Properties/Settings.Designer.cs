@@ -74,5 +74,29 @@ namespace LocalAISight.Properties {
                 this["Model"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseExternalServer {
+            get {
+                return ((bool)(this["UseExternalServer"]));
+            }
+            set {
+                this["UseExternalServer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExternalIP {
+            get {
+                return ((string)(this["ExternalIP"]));
+            }
+            set {
+                this["ExternalIP"] = value;
+            }
+        }
     }
 }

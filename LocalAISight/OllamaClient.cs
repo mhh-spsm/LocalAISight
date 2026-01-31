@@ -7,7 +7,7 @@ namespace LocalAISight;
 public class OllamaClient
 {
     private readonly HttpClient _httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(120) };
-    private const string OllamaUrl = "http://localhost:11434/api/generate";
+    private const string LocalOllamaUrl = "http://localhost:11434/api/generate";
     private const string DefaultQuestion = "Beskriv det du ser här";
 
     public async Task<string> GetDescriptionAsync(string img, string question = null)
@@ -24,10 +24,14 @@ public class OllamaClient
             options = new { temperature = 0 },
             keep_alive = -1
         };
-
+        var myUrl = LocalOllamaUrl;
+        if (Properties.Settings.Default.UseExternalServer && !string.IsNullOrEmpty(Properties.Settings.Default.ExternalIP))
+        {
+            myUrl =$"http://{Properties.Settings.Default.ExternalIP}:11434/api/generate" ;
+        }
         try
         {
-            var response = await _httpClient.PostAsJsonAsync(OllamaUrl, payload);
+            var response = await _httpClient.PostAsJsonAsync(myUrl, payload);
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadFromJsonAsync<JsonElement>();
             return json.GetProperty("response").GetString();

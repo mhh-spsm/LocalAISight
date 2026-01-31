@@ -14,5 +14,11 @@
     <Setting Name="Model" Type="System.String" Scope="User">
       <Value Profile="(Default)">ministral-3</Value>
     </Setting>
+    <Setting Name="UseExternalServer" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ExternalIP" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

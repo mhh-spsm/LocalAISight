@@ -15,6 +15,12 @@
         <TextBox x:Name="DefaultPromptTextBox" Margin="0,0,0,20"/>
         <Label Content="OCRfråga:" Target="{Binding ElementName=OCRPromptTextBox}"/>
         <TextBox x:Name="OCRPromptTextBox" Margin="0,0,0,20"/>
+        <Label Content="OLLAMA Modell:" Target="{Binding ElementName=ModelTextBox}"/>
+        <TextBox x:Name="ModelTextBox" Margin="0,0,0,20"/>
+
+        <CheckBox Content="Använd extern OLLAMA server" x:Name="UseExternalServer" Margin="10"/>
+        <Label Content="Extern IP för OLLAMA:" Target="{Binding ElementName=ExternalIPTextBox}"/>
+        <TextBox x:Name="ExternalIPTextBox" Margin="0,0,0,20"/>
 
         <Button Content="Spara och stäng" Click="SaveButton_Click" Padding="10"/>
     </StackPanel>

@@ -23,12 +23,18 @@ namespace LocalAISight
             DefaultPromptTextBox.Text = Properties.Settings.Default.DefaultPrompt;
             SystemMessageTextBox.Text = Properties.Settings.Default.SystemPrompt;
             OCRPromptTextBox.Text = Properties.Settings.Default.OCRPrompt;
+            ModelTextBox.Text = Properties.Settings.Default.Model;
+            UseExternalServer.IsChecked = Properties.Settings.Default.UseExternalServer;
+            ExternalIPTextBox.Text = Properties.Settings.Default.ExternalIP;
         }
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.DefaultPrompt = DefaultPromptTextBox.Text;
             Properties.Settings.Default.OCRPrompt = OCRPromptTextBox.Text;
             Properties.Settings.Default.SystemPrompt = SystemMessageTextBox.Text;
+            Properties.Settings.Default.Model = ModelTextBox.Text;
+            Properties.Settings.Default.UseExternalServer = UseExternalServer.IsChecked.Value;
+            Properties.Settings.Default.ExternalIP = ExternalIPTextBox.Text;
             Properties.Settings.Default.Save();
             this.Close();
         }
