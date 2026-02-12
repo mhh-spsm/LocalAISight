@@ -48,6 +48,18 @@ namespace LocalAISight.Properties {
                 this["OCRPrompt"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SelectedProfile {
+            get {
+                return ((string)(this["SelectedProfile"]));
+            }
+            set {
+                this["SelectedProfile"] = value;
+            }
+        }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

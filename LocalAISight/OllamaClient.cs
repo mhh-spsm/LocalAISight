@@ -15,11 +15,14 @@ public class OllamaClient
 
     public async Task<string> GetDescriptionAsync(string img, string question = null)
     {
-        var myPrompt = !string.IsNullOrEmpty(question) ? question : Properties.Settings.Default.DefaultPrompt;
-        var mySystemPrompt = Properties.Settings.Default.SystemPrompt;
+        // Prefer values from active profile if present
+        var active = ProfilesStore.Instance.ActiveProfile;
+        var myPrompt = !string.IsNullOrEmpty(question) ? question : (active?.DefaultPrompt ?? Properties.Settings.Default.DefaultPrompt);
+        var mySystemPrompt = active?.SystemPrompt ?? Properties.Settings.Default.SystemPrompt;
+        var model = active?.Model ?? Properties.Settings.Default.Model;
         var payload = new
         {
-            model = Properties.Settings.Default.Model,
+            model = model,
             system = mySystemPrompt,
             prompt = myPrompt,
             images = new[] { img },

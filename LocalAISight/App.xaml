@@ -4,6 +4,13 @@
              xmlns:local="clr-namespace:LocalAISight"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="AutomationProperties.Name"
+                Value="{Binding Name}" />
+        </Style>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="AutomationProperties.Name"
+                Value="{Binding Name}" />
+        </Style>
     </Application.Resources>
 </Application>

@@ -1,19 +1,22 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using LocalAISight.Models;
+using Microsoft.Graphics.Canvas;
+using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime; // KRÄVS för .AsBuffer()
 using System.Text;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Runtime.InteropServices.WindowsRuntime; // KRÄVS för .AsBuffer()
-using Windows.Storage.Streams;                       // KRÄVS för InMemoryRandomAccessStream
-using Windows.Graphics.Imaging;                      // För SoftwareBitmap
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX.Direct3D11;
+using Windows.Graphics.Imaging;                      // För SoftwareBitmap
+using Windows.Storage.Streams;                       // KRÄVS för InMemoryRandomAccessStream
 using WinRT.Interop; // Detta sköts nu snyggare i WPF
 
 namespace LocalAISight
@@ -26,10 +29,65 @@ namespace LocalAISight
         private OllamaClient _ollamaClient = new OllamaClient();
         private GraphicsCaptureItem item;
         private string lastImage;
+        // Use the shared ProfilesStore
+        private readonly ProfilesStore _profilesStore = ProfilesStore.Instance;
         public MainWindow()
         {
             InitializeComponent();
+            _ = InitializeProfilesAsync();
         }
+        private async System.Threading.Tasks.Task InitializeProfilesAsync()
+        {
+            await _profilesStore.LoadAsync();
+            ProfilesCombo.ItemsSource = null;
+            ProfilesCombo.ItemsSource = _profilesStore.Profiles;
+            // Set selection to active profile if any
+            if (_profilesStore.ActiveProfile != null)
+            {
+                ProfilesCombo.SelectedItem = _profilesStore.ActiveProfile;
+                UpdateUIFromActiveProfile();
+                ProfilesCombo.Loaded += (s, e) =>
+                {
+                    
+                };
+            }
+
+            _profilesStore.ActiveProfileChanged += () =>
+            {
+                // update UI on active profile change
+                Application.Current.Dispatcher.Invoke(UpdateUIFromActiveProfile);
+            };
+        }
+
+        private void UpdateUIFromActiveProfile()
+        {
+            var p = _profilesStore.ActiveProfile;
+            if (p != null)
+            {
+                // reflect default prompt in UI
+
+                //UserQuestionBox.Text = p.DefaultPrompt ?? string.Empty;
+                // For now We leave the box empty so that the default question is used by default
+            }
+        }
+
+        private void ManageProfilesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new ProfilesWindow();
+            win.Owner = this;
+            win.ShowDialog();
+            // reload profiles into combo
+            _ = InitializeProfilesAsync();
+        }
+
+        private void ProfilesCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ProfilesCombo.SelectedItem is Profile p)
+            {
+                _profilesStore.SetActive(p);
+            }
+        }
+
         private async void TargetButton_Click(object sender, RoutedEventArgs e)
         {
             try

@@ -16,7 +16,16 @@
         <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Center" Margin="10">
         <Button x:Name="TargetButton" Content="Välj fönster" Click="TargetButton_Click" Margin="5" Padding="10"/>
         <Button x:Name="CaptureButton" Content="Beskriv!" Click="CaptureButton_Click" Margin="5" Padding="10"/>
-            <Button x:Name="SettingsButton" Content="Inställingar" Click="SettingsButton_Click" Margin="5" Padding="10"/>
+            <Button x:Name="SettingsButton" Content="Inställningar" Click="SettingsButton_Click" Margin="5" Padding="10"/>
+            <ComboBox x:Name="ProfilesCombo" Width="200" Margin="5" SelectionChanged="ProfilesCombo_SelectionChanged" AutomationProperties.Name="Välj profil:">
+                          <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"
+                       AutomationProperties.Name="{Binding Name}" />
+                </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button x:Name="ManageProfilesButton" Content="Profiler" Click="ManageProfilesButton_Click" Margin="5" Padding="10"/>
         </StackPanel>
 
         <ScrollViewer Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto">
