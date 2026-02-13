@@ -1,4 +1,4 @@
-<Window x:Class="LocalAISight.ProfilesWindow"
+﻿<Window x:Class="LocalAISight.ProfilesWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Profiler" Height="350" Width="400">
@@ -13,7 +13,7 @@
             <Button x:Name="AddButton" Content="Ny" Width="60" Margin="5" Click="AddButton_Click"/>
             <Button x:Name="EditButton" Content="Redigera" Width="60" Margin="5" Click="EditButton_Click"/>
             <Button x:Name="DeleteButton" Content="Ta bort" Width="60" Margin="5" Click="DeleteButton_Click"/>
-            <Button x:Name="CloseButton" Content="Stang" Width="60" Margin="5" Click="CloseButton_Click"/>
+            <Button x:Name="CloseButton" Content="Stäng" Width="60" Margin="5" Click="CloseButton_Click"/>
         </StackPanel>
     </Grid>
 </Window>
