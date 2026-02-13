@@ -1,6 +1,7 @@
 ﻿using LocalAISight.Models;
 using Microsoft.Graphics.Canvas;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime; // KRÄVS för .AsBuffer()
 using System.Text;
@@ -24,18 +25,41 @@ namespace LocalAISight
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private OllamaClient _ollamaClient = new OllamaClient();
         private GraphicsCaptureItem item;
         private string lastImage;
+        private List<string> _availableModels;
+        public List<string> AvailableModels
+        {
+            get => _availableModels;
+            set { _availableModels = value; OnPropertyChanged(nameof(AvailableModels)); }
+        }
+
+        private string _selectedModel;
+        public string SelectedModel
+        {
+            get => _selectedModel;
+            set { _selectedModel = value; OnPropertyChanged(nameof(SelectedModel)); }
+        }
         // Use the shared ProfilesStore
         private readonly ProfilesStore _profilesStore = ProfilesStore.Instance;
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
             _ = InitializeProfilesAsync();
+            Loaded += MainWindow_Loaded; // 3) Ladda async efter att UI är klart
         }
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string name)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
         private async System.Threading.Tasks.Task InitializeProfilesAsync()
         {
             await _profilesStore.LoadAsync();
@@ -46,11 +70,12 @@ namespace LocalAISight
             {
                 ProfilesCombo.SelectedItem = _profilesStore.ActiveProfile;
                 UpdateUIFromActiveProfile();
-                ProfilesCombo.Loaded += (s, e) =>
+                ProfilesCombo.Loaded += async (s, e) =>
                 {
-                    
+
                 };
             }
+            AvailableModels = await _ollamaClient.GetModelsAsync(Properties.Settings.Default.UseExternalServer ? Properties.Settings.Default.ExternalIP : null);
 
             _profilesStore.ActiveProfileChanged += () =>
             {
@@ -59,7 +84,7 @@ namespace LocalAISight
             };
         }
 
-        private void UpdateUIFromActiveProfile()
+        private async void UpdateUIFromActiveProfile()
         {
             var p = _profilesStore.ActiveProfile;
             if (p != null)
@@ -68,6 +93,8 @@ namespace LocalAISight
 
                 //UserQuestionBox.Text = p.DefaultPrompt ?? string.Empty;
                 // For now We leave the box empty so that the default question is used by default
+//                OnPropertyChanged(nameof(AvailableModels));
+                SelectedModel = p.Model ?? null;
             }
         }
 
@@ -131,8 +158,10 @@ namespace LocalAISight
             try
             {
                 var question = UserQuestionBox.Text;
-                var result = await _ollamaClient.GetDescriptionAsync(lastImage, question);
+                DescriptionLbl.Text = "AI:n tänker...";
+                var result = await _ollamaClient.GetDescriptionAsync(lastImage, question, SelectedModel);
                 DescriptionBox.Text = result;
+                DescriptionLbl.Text = $"AI-Svar ({SelectedModel}):";
                 DescriptionBox.Focus();
 
             }
@@ -165,9 +194,10 @@ namespace LocalAISight
                 var question = UserQuestionBox.Text ?? "";
                 string base64Image = await CaptureSingleFrameAsBase64(item, d3dDevice, true, true);
                 lastImage = base64Image;
-                // 6. Skicka till Ollama (lägg till din AskOllama-metod här)
-                var result = await _ollamaClient.GetDescriptionAsync(base64Image, question);
+                DescriptionLbl.Text = "AI:n tänker...";
+                var result = await _ollamaClient.GetDescriptionAsync(base64Image, question, SelectedModel);
                 DescriptionBox.Text = result;
+                DescriptionLbl.Text = $"AI-beskrivning ({SelectedModel}):";
                 DescriptionBox.Focus();
             }
             catch (Exception ex)

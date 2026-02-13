@@ -13,16 +13,16 @@ public class OllamaClient
     private const string LocalOllamaUrl = "http://localhost:11434/api/generate";
     private const string DefaultQuestion = "Beskriv det du ser här";
 
-    public async Task<string> GetDescriptionAsync(string img, string question = null)
+    public async Task<string> GetDescriptionAsync(string img, string question = null, string model = null)
     {
         // Prefer values from active profile if present
         var active = ProfilesStore.Instance.ActiveProfile;
-        var myPrompt = !string.IsNullOrEmpty(question) ? question : (active?.DefaultPrompt ?? Properties.Settings.Default.DefaultPrompt);
-        var mySystemPrompt = active?.SystemPrompt ?? Properties.Settings.Default.SystemPrompt;
-        var model = active?.Model ?? Properties.Settings.Default.Model;
+        var myPrompt = !string.IsNullOrEmpty(question) ? question : (active?.DefaultPrompt ?? string.Empty);
+        var mySystemPrompt = active?.SystemPrompt ?? string.Empty;
+        var myModel = model ?? active?.Model;
         var payload = new
         {
-            model = model,
+            model = myModel,
             system = mySystemPrompt,
             prompt = myPrompt,
             images = new[] { img },
