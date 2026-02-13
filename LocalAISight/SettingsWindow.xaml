@@ -7,16 +7,6 @@
         mc:Ignorable="d"
         Title="Inställningar" Height="450" Width="300">
     <StackPanel Margin="20">
-        <Label Content="System-meddelande (Instruktion):" Target="{Binding ElementName=SystemMessageTextBox}"/>
-        <TextBox x:Name="SystemMessageTextBox" Height="80" TextWrapping="Wrap" AcceptsReturn="True" 
-                 Margin="0,0,0,10"/>
-
-        <Label Content="Standardfråga:" Target="{Binding ElementName=DefaultPromptTextBox}"/>
-        <TextBox x:Name="DefaultPromptTextBox" Margin="0,0,0,20"/>
-        <Label Content="OCRfråga:" Target="{Binding ElementName=OCRPromptTextBox}"/>
-        <TextBox x:Name="OCRPromptTextBox" Margin="0,0,0,20"/>
-        <Label Content="OLLAMA Modell:" Target="{Binding ElementName=ModelComboBox}"/>
-        <ComboBox x:Name="ModelComboBox" IsEditable="True" Margin="0,0,0,20"/>
 
         <CheckBox Content="Använd extern OLLAMA server" x:Name="UseExternalServer" Margin="10"/>
         <Label Content="Extern IP för OLLAMA:" Target="{Binding ElementName=ExternalIPTextBox}"/>

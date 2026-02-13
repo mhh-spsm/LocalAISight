@@ -1,0 +1,25 @@
+<Window x:Class="LocalAISight.ProfileEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LocalAISight"
+        mc:Ignorable="d"
+        Title="Redigera profil" Height="350" Width="400">
+    <StackPanel Margin="10">
+        <Label Content="Namn:" Target="{Binding ElementName=NameBox}"/>
+        <TextBox x:Name="NameBox" Margin="0,0,0,10"/>
+        <Label Content="Systemmeddelande:" Target="{Binding ElementName=SystemBox}"/>
+        <TextBox x:Name="SystemBox" Height="80" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,10"/>
+        <Label Content="Standardfraga:" Target="{Binding ElementName=DefaultBox}"/>
+        <TextBox x:Name="DefaultBox" Margin="0,0,0,10"/>
+        <Label Content="OCRPrompt:" Target="{Binding ElementName=OCRPromptTextBox}"/>
+        <TextBox x:Name="OCRPromptTextBox" Margin="0,0,0,20"/>
+        <Label Content="OLLAMA Modell:" Target="{Binding ElementName=ModelComboBox}"/>
+        <ComboBox x:Name="ModelComboBox" Margin="0,0,0,20"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Spara" Width="80" Margin="5" Click="Save_Click"/>
+            <Button Content="Avbryt" Width="80" Margin="5" Click="Cancel_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

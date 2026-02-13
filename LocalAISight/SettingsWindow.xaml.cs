@@ -22,11 +22,8 @@ namespace LocalAISight
         public SettingsWindow()
         {
             InitializeComponent();
-            DefaultPromptTextBox.Text = Properties.Settings.Default.DefaultPrompt;
-            SystemMessageTextBox.Text = Properties.Settings.Default.SystemPrompt;
-            OCRPromptTextBox.Text = Properties.Settings.Default.OCRPrompt;
-            // set the model text initially (will be overridden by selection if present)
-            ModelComboBox.Text = Properties.Settings.Default.Model;
+            // If an active profile exists, show its values; otherwise fall back to settings
+            var active = ProfilesStore.Instance.ActiveProfile;
             UseExternalServer.IsChecked = Properties.Settings.Default.UseExternalServer;
             ExternalIPTextBox.Text = Properties.Settings.Default.ExternalIP;
 
@@ -48,46 +45,21 @@ namespace LocalAISight
                 ip = ExternalIPTextBox.Text.Trim();
             }
 
+            // Use the profile's model source if active
+            var active = ProfilesStore.Instance.ActiveProfile;
             var models = await client.GetModelsAsync(ip);
 
-            // If we got models, populate the ComboBox. Otherwise leave current text (saved model).
-            if (models != null && models.Count > 0)
-            {
-                // preserve user-typed text if not in list
-                var current = ModelComboBox.Text;
-                ModelComboBox.ItemsSource = models;
-                if (!string.IsNullOrEmpty(Properties.Settings.Default.Model))
-                {
-                    if (models.Contains(Properties.Settings.Default.Model))
-                    {
-                        ModelComboBox.SelectedItem = Properties.Settings.Default.Model;
-                    }
-                    else
-                    {
-                        // keep saved model as editable text even if not in the fetched list
-                        ModelComboBox.Text = Properties.Settings.Default.Model;
-                    }
-                }
-                else if (!string.IsNullOrEmpty(current))
-                {
-                    ModelComboBox.Text = current;
-                }
-            }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.DefaultPrompt = DefaultPromptTextBox.Text;
-            Properties.Settings.Default.OCRPrompt = OCRPromptTextBox.Text;
-            Properties.Settings.Default.SystemPrompt = SystemMessageTextBox.Text;
 
-            // Save model from the ComboBox (editable) — prefer SelectedItem, fall back to Text
-            var selectedModel = ModelComboBox.SelectedItem?.ToString();
-            Properties.Settings.Default.Model = !string.IsNullOrEmpty(selectedModel) ? selectedModel : ModelComboBox.Text ?? string.Empty;
 
             Properties.Settings.Default.UseExternalServer = UseExternalServer.IsChecked.Value;
             Properties.Settings.Default.ExternalIP = ExternalIPTextBox.Text;
-            Properties.Settings.Default.Save();
+
+            // If a profile is active, update it; otherwise update settings
+            var activeProfile = ProfilesStore.Instance.ActiveProfile;
             this.Close();
         }
     }
