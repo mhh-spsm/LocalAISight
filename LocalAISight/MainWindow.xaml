@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LocalAISight"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
         Title="LocalAISight" Height="450" Width="800">
     <Grid>
@@ -61,19 +62,7 @@
                 </StackPanel>
             </Grid>
         </Grid>
-        <ScrollViewer Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto">
-            <TextBox x:Name="DescriptionBox" 
-                 TextWrapping="Wrap" 
-                 Focusable="True"
-                 IsReadOnlyCaretVisible="True" 
-                 AutomationProperties.LiveSetting="Polite"
-                 IsReadOnly="True"
-                 AutomationProperties.Name="Beskrivningar"
-                 Text="Väntar på första beskrivningen..."
-                 Background="#F0F0F0"
-                 Padding="10"/>
-        </ScrollViewer>
-
+        <wv2:WebView2 x:Name="MarkdownWebView" Grid.Row="1" Margin="10"/>
         <DockPanel Grid.Row="2" Margin="10">
             <TextBox x:Name="UserQuestionBox" AutomationProperties.Name="Skriv din fråga här" VerticalContentAlignment="Center" Height="35" GotFocus="UserQuestionBox_GotFocus" />
             <Button x:Name="AskButton" Content="Skicka Fråga" Click="AskButton_Click" DockPanel.Dock="Right" Padding="15,0" Margin="10,0,0,0" IsDefault="True"/>

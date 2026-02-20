@@ -19,6 +19,9 @@ using Windows.Graphics.DirectX.Direct3D11;
 using Windows.Graphics.Imaging;                      // För SoftwareBitmap
 using Windows.Storage.Streams;                       // KRÄVS för InMemoryRandomAccessStream
 using WinRT.Interop; // Detta sköts nu snyggare i WPF
+using Microsoft.Web.WebView2.Wpf;
+using Markdig;
+using LocalAISight.Extensions;
 
 namespace LocalAISight
 {
@@ -45,12 +48,47 @@ namespace LocalAISight
         }
         // Use the shared ProfilesStore
         private readonly ProfilesStore _profilesStore = ProfilesStore.Instance;
+        private readonly MarkdownPipeline _pipeline =
+          new MarkdownPipelineBuilder().UseAdvancedExtensions()
+//            .Use(new HtmlPreProcessor())
+            .UseSoftlineBreakAsHardlineBreak().Build();
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
             _ = InitializeProfilesAsync();
             Loaded += MainWindow_Loaded; // 3) Ladda async efter att UI är klart
+            _ = ShowMarkdownAsync("# Välkommen till LocalAISight!\n\n1. Välj ett fönster med 'Välj Fönster'-knappen.\n2. Skriv en fråga eller beskrivning i textrutan.\n3. Klicka på 'Få AI-beskrivning' för att få en AI-genererad beskrivning av det valda fönstret.\n\nDu kan också hantera dina profiler och modeller i inställningarna.").ConfigureAwait(false);
+        }
+        private async Task ShowMarkdownAsync(string markdown)
+    {
+            var bodyHtml = Markdig.Markdown.ToHtml(markdown, _pipeline);
+
+            // Efterbearbeta HTML:
+            var processedHtml = HtmlPostProcessor.Transform(bodyHtml);
+
+            // Omslut i enkel HTML-sida:
+            var fullHtml = $@"<!doctype html>
+<html lang=""sv"">
+<head>
+  <meta charset=""utf-8"">
+  <meta name=""viewport"" content=""width=device-width, initial-scale=1"">
+  <title>Markdown</title>
+  <style>
+    body {{ font-family: system-ui, Segoe UI, Roboto, sans-serif; padding:20px; }}
+    h1,h2,h3 {{ margin-top:1.4em; }}
+    pre {{ background:#f5f5f7; padding:12px; border-radius:6px; overflow:auto; }}
+    table {{ border-collapse:collapse; width:100%; }}
+    th,td {{ border:1px solid #ddd; padding:6px 8px; text-align:left; }}
+  </style>
+</head>
+<body>
+  {processedHtml}
+</body>
+</html>";
+
+            await MarkdownWebView.EnsureCoreWebView2Async();
+            MarkdownWebView.NavigateToString(fullHtml);
         }
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -160,9 +198,9 @@ namespace LocalAISight
                 var question = UserQuestionBox.Text;
                 DescriptionLbl.Text = "AI:n tänker...";
                 var result = await _ollamaClient.GetDescriptionAsync(lastImage, question, SelectedModel);
-                DescriptionBox.Text = result;
+                await ShowMarkdownAsync(result);
                 DescriptionLbl.Text = $"AI-Svar ({SelectedModel}):";
-                DescriptionBox.Focus();
+                MarkdownWebView.Focus();
 
             }
             catch (Exception ex)
@@ -196,9 +234,9 @@ namespace LocalAISight
                 lastImage = base64Image;
                 DescriptionLbl.Text = "AI:n tänker...";
                 var result = await _ollamaClient.GetDescriptionAsync(base64Image, question, SelectedModel);
-                DescriptionBox.Text = result;
+                await ShowMarkdownAsync(result);
                 DescriptionLbl.Text = $"AI-beskrivning ({SelectedModel}):";
-                DescriptionBox.Focus();
+                MarkdownWebView.Focus();
             }
             catch (Exception ex)
             {
